@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "es6",
+    "moduleResolution": "Node",
     "lib": ["es6"],
     "strict": true,
     "typeRoots": [
@@ -8,6 +9,6 @@
       "./node_modules/@figma"
     ],
     "rootDir": "src",
-    "module": "commonjs"
-  }
+    "module": "ES6"
+  },
 }

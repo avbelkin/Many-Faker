@@ -1,6 +1,6 @@
 import { textTransform } from "./text-transform";
 
-export const pattern = /\{.*?\}/g
+export const pattern = /\{(.*?)(:(.*?))?\}/g
 export async function replace(selection: readonly SceneNode[]) : Promise<SceneNode[]>
 {
     let nodes: TextNode[] = [];
@@ -41,10 +41,7 @@ function traverse(parentNode: SceneNode ): TextNode[]{
 }
 
 async function replaceTextsOnNodes(textNodes: TextNode []){
-    console.log(textNodes.length)
     for (const textNode of textNodes) {
-        console.log(textNode.type)
-        console.log(textNode.fontName);
         if(textNode.fontName !== figma.mixed)
         {
             await figma.loadFontAsync(textNode.fontName as FontName);
@@ -65,20 +62,16 @@ async function replaceTextsOnNodes(textNodes: TextNode []){
             if(textNode.fontName !== figma.mixed)
             {
                 textNode.autoRename = false;
-                console.log(textNode.characters);
                 if(!pattern.test(textNode.characters)) continue;
                 
                 textNode.characters = textTransform(textNode.characters);
             }
             else
             {
-                debugger;
                 const segments = textNode.getStyledTextSegments(['fontName', 'indentation' ]) as Array<StyledTextSegment>;
-                console.log(segments);
                 for(let i = segments.length-1; i>= 0; i--)
                 {
                     const segment = segments[i];
-                    console.log(segment.characters);
                     if(!pattern.test(segment.characters)) continue;
 
                     const oldCharsCount = segment.end - segment.start;
@@ -87,7 +80,6 @@ async function replaceTextsOnNodes(textNodes: TextNode []){
                     textNode.insertCharacters(segment.end, newText, "BEFORE" )
                     textNode.deleteCharacters(oldsegmentStart, oldsegmentStart+oldCharsCount)
                 }
-                console.log(textNode.getStyledTextSegments(['fontName', 'indentation' ]) as Array<StyledTextSegment>);
             }    
         }
     }

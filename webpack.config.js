@@ -1,5 +1,6 @@
 const path = require('path');
-module.exports = {
+const TerserPlugin = require('terser-webpack-plugin');
+module.exports = (env, argv) =>({
   mode: "development",
   devtool: "inline-source-map",
   entry: {
@@ -19,5 +20,9 @@ module.exports = {
         loader: "ts-loader"
       }
     ]
+  },
+  optimization: {
+    minimize: false,
+    minimizer: [new TerserPlugin()]
   }
-};
+});
