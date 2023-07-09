@@ -2,13 +2,13 @@
   "name": "Many Faker",
   "id": "1259803962281929004",
   "api": "1.0.0",
-  "main": "code.js",
+  "main": "build/build.js",
   "capabilities": [],
   "enableProposedApi": false,
   "editorType": [
     "figma"
   ],
-  "ui": "ui.html",
+  "ui": "src/ui.html",
   "networkAccess": {
     "allowedDomains": [
       "none"
