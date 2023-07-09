@@ -36,7 +36,7 @@ function traverse(parentNode: SceneNode ): TextNode[]{
     }
     return nodes;
 }
-
+const pattern = /\{.*?\}/
 async function replaceTextsOnNodes(textNodes: TextNode []){
     console.log(textNodes.length)
     for (const textNode of textNodes) {
@@ -63,7 +63,9 @@ async function replaceTextsOnNodes(textNodes: TextNode []){
             {
                 textNode.autoRename = false;
                 console.log(textNode.characters);
-                textNode.characters = "XXX";
+                if(!pattern.test(textNode.characters)) continue;
+                
+                textNode.characters = textTransform(textNode.characters);
             }
             else
             {
@@ -74,9 +76,11 @@ async function replaceTextsOnNodes(textNodes: TextNode []){
                 {
                     const segment = segments[i];
                     console.log(segment.characters);
+                    if(!pattern.test(segment.characters)) continue;
+
                     const oldCharsCount = segment.end - segment.start;
                     const oldsegmentStart = segment.start;
-                    const newText = "XXX";
+                    const newText = textTransform(segment.characters);
                     textNode.insertCharacters(segment.end, newText, "BEFORE" )
                     textNode.deleteCharacters(oldsegmentStart, oldsegmentStart+oldCharsCount)
                 }
@@ -84,4 +88,9 @@ async function replaceTextsOnNodes(textNodes: TextNode []){
             }    
         }
     }
+}
+
+function textTransform(oldText: string) : string
+{
+    return "XXX";
 }
