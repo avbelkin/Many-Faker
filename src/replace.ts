@@ -1,3 +1,6 @@
+import { textTransform } from "./text-transform";
+
+export const pattern = /\{.*?\}/g
 export async function replace(selection: readonly SceneNode[]) : Promise<SceneNode[]>
 {
     let nodes: TextNode[] = [];
@@ -36,7 +39,7 @@ function traverse(parentNode: SceneNode ): TextNode[]{
     }
     return nodes;
 }
-const pattern = /\{.*?\}/
+
 async function replaceTextsOnNodes(textNodes: TextNode []){
     console.log(textNodes.length)
     for (const textNode of textNodes) {
@@ -88,9 +91,4 @@ async function replaceTextsOnNodes(textNodes: TextNode []){
             }    
         }
     }
-}
-
-function textTransform(oldText: string) : string
-{
-    return "XXX";
 }
