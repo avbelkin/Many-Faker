@@ -1,7 +1,7 @@
 {
-  "name": "Many Faker",
+  "name": "many-faker",
   "version": "1.0.0",
-  "description": "Your Figma Plugin",
+  "description": "Faker but in Singapore",
   "main": "./src/code.js",
   "scripts": {
     "build": "webpack",
