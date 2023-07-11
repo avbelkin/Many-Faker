@@ -1,6 +1,6 @@
 import { textTransform } from "./text-transform";
 
-export const pattern = /\{(.*?)(:(.*?))?\}/g
+export const pattern = /\{(.*?)(:(.*?))(:(.*?))?\}/g
 export async function replace(selection: readonly SceneNode[]) : Promise<SceneNode[]>
 {
     let nodes: TextNode[] = [];
