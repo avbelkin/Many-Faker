@@ -1,8 +1,7 @@
 const path = require('path');
-const TerserPlugin = require('terser-webpack-plugin');
 module.exports = (env, argv) =>({
   mode: "development",
-  devtool: "inline-source-map",
+  devtool: argv.mode === "production" ? false : "inline-source-map",
   entry: {
     main: "./src/code.ts",
   },
@@ -16,13 +15,19 @@ module.exports = (env, argv) =>({
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
-        loader: "ts-loader"
+        test: /\.(m?js|ts)?$/,
+        exclude: function(modulePath){
+          return  /node_modules/.test(modulePath) && 
+          !(
+            /node_modules\/@faker-js/.test(modulePath)
+            || /node_modules\/d3.*/.test(modulePath)
+          );
+        },
+        loader: "babel-loader",
+        options: {
+          rootMode: "upward",
+        },
       }
     ]
-  },
-  optimization: {
-    minimize: false,
-    minimizer: [new TerserPlugin()]
   }
 });

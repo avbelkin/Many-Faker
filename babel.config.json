@@ -1,0 +1,11 @@
+
+{
+    "presets": [
+        "@babel/env",
+        "@babel/preset-typescript"
+    ],
+    "plugins": [
+      "@babel/plugin-transform-spread",
+      "@babel/plugin-transform-object-rest-spread"      
+  ]
+}

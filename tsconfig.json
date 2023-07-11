@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
     "target": "es6",
+    "isolatedModules": true,
+    "esModuleInterop": true,
     "moduleResolution": "Node",
-    "lib": ["es6"],
+    "lib": ["ES2017"],
     "strict": true,
     "typeRoots": [
       "./node_modules/@types",

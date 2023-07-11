@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker'
+import * as faker from '@faker-js/faker'
 import * as d3 from "d3"
 import { pattern } from "./replace";
 
@@ -36,5 +36,5 @@ interface IX
 const x: Array<IX> = [
     { pattern: "aaa", fn: ()=> d3.randomUniform(10000)().toString()  },
     { pattern: "eee", fn: ()=> d3.format(".2f")(d3.randomUniform(10)())  },
-    { pattern: "bbb", fn: ()=> d3.randomUniform(10)().toString()  }
-]
+    { pattern: "bbb", fn: ()=> d3.randomUniform(10)().toString()  },
+    { pattern: "ddd", fn: ()=> faker.faker.location.city()  } ]
