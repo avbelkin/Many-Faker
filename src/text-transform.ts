@@ -14,7 +14,7 @@ function replacer(match: string, start: number): string {
     let format = parts[0][4]; // like .2f
 
     let [name, param1, param2] = getParams(parts[0][1]); //replacer name to match with
-    //debugger;
+    debugger;
     const replacer = Replacers.find(i => i.pattern === name);
     if(replacer == null) return match;
     
@@ -29,7 +29,7 @@ function replacer(match: string, start: number): string {
     param1 = param1 || (replacer.d3params && replacer.d3params[0]);
     param2 = param2 || (replacer.d3params && replacer.d3params[1]);
 
-    return d3.format(format)(replacer.fn(param1));
+    return d3.format(format)(replacer.fn(param1, param2));
 }
 
 const scalePartRegex = /(.*?)((\d{1,10})([KMB])?(-(\d{1,10})([KMB])?)?)/g
@@ -69,7 +69,7 @@ function convertScale(numString: string, scaleString: string): number {
 type Replacer =
 {
     pattern: string
-    fn: Function | ((a?: number) => void) | ((a?: number, b?: number) => void)
+    fn: Function | ((param1?: number) => void) | ((param1?: number, param2?: number) => void)
     d3format?: string
     d3params?: Array<number>;
 }
