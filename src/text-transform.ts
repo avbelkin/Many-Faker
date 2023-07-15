@@ -14,7 +14,7 @@ function replacer(match: string, start: number): string {
     let format = parts[0][4]; // like .2f
 
     let [name, param1, param2] = getParams(parts[0][1]); //replacer name to match with
-    debugger;
+    //debugger;
     const replacer = Replacers.find(i => i.pattern === name);
     if(replacer == null) return match;
     
@@ -76,10 +76,11 @@ type Replacer =
 
 const Replacers: Array<Replacer> = [
     { pattern: "random", fn: (max: number, min: number)=> d3.randomUniform(min, max)().toString(), d3format: "d", d3params: [100, 0] },
-
+    { pattern: "randomN", fn: (center: number, deviation: number)=> d3.randomNormal(center, deviation ?? (center / 4) )().toString(), d3format: "d", d3params: [100] },
+    { pattern: "money", fn: (max: number, min: number)=> d3.randomUniform(min, max)().toString(), d3format: ",.2f", d3params: [100, 0] },
+    { pattern: "moneyN", fn: (center: number, deviation: number)=> d3.randomNormal(center, deviation ?? (center / 4) )().toString(), d3format: ",.2f", d3params: [10000] },
     //
     
-    { pattern: "normal", fn: (center: number, deviation: number)=> d3.randomNormal(center, deviation ?? (center / 4) )().toString(), d3format: "d", d3params: [100] },
     //
     
     //location
