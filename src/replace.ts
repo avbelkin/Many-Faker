@@ -1,14 +1,14 @@
 import { textTransform } from "./text-transform";
 
-export const pattern = /\{(.*?)(:(.*?))(:(.*?))?\}/g
+export const pattern = /\{.*?\}/g
 export async function replace(selection: readonly SceneNode[]) : Promise<SceneNode[]>
 {
     let nodes: TextNode[] = [];
     for(const selectedNode of selection)
     {
         const foundNodes = traverse(selectedNode);
-        if(foundNodes.length>0)
-        nodes = nodes.concat(foundNodes);
+        if(foundNodes.length >0 )
+            nodes = nodes.concat(foundNodes);
     }
     await replaceTextsOnNodes(nodes);
     return nodes;
@@ -61,10 +61,18 @@ async function replaceTextsOnNodes(textNodes: TextNode []){
         {
             if(textNode.fontName !== figma.mixed)
             {
-                textNode.autoRename = false;
-                if(!pattern.test(textNode.characters)) continue;
+                const hasMatchInText = pattern.test(textNode.characters);
+                const hasMatchInName = pattern.test(textNode.name);
                 
-                textNode.characters = textTransform(textNode.characters);
+                if(!(hasMatchInText || hasMatchInName)) continue;
+                
+                textNode.autoRename = false;
+                if(hasMatchInText)
+                    textNode.characters = textTransform(textNode.characters);
+                else if(hasMatchInName)
+                    textNode.characters = textTransform(textNode.name);
+                else
+                    debugger;
             }
             else
             {

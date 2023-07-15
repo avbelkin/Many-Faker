@@ -1,36 +1,36 @@
 import { faker } from '@faker-js/faker'
 import * as d3 from "d3"
-import { pattern } from "./replace";
+//const orPattern = /\{.*?(|.*?)+\}/g
 
 export function textTransform(oldText: string) : string
 {
     return oldText.replace(pattern, replacer);
 }
-function replacer(match: string, start: number): string
-{
-    debugger;
+const pattern = /\{(.*?)((:(.*?))(:(.*?)))?\}/g
+
+function replacer(match: string, start: number): string {
     const parts = [...match.matchAll(pattern)];
 
     const name = parts[0][1];
-    const scale = parts[0][3];
-    const format = parts[0][5];
+    const scale = parts[0][4];
+    const format = parts[0][6];
     debugger;
-    const patternPart = x.find(i => i.pattern === name);
-    if(patternPart == null) return match;
+    const replacer = x.find(i => i.pattern === name);
+    if(replacer == null) return match;
 
     if(format)
     {
-        if(!patternPart.range)
-            return d3.format(format)(patternPart.fn());
-        return d3.format(format)(patternPart.fn(patternPart.range[0],patternPart.range[1]));
+        if(!replacer.range)
+            return d3.format(format)(replacer.fn());
+        return d3.format(format)(replacer.fn(replacer.range[0],replacer.range[1]));
     }
-    else if(patternPart.d3format)
+    else if(replacer.d3format)
     {
-        if(!patternPart.range)
-            return d3.format(patternPart.d3format)(patternPart.fn());
-        return d3.format(patternPart.d3format)(patternPart.fn(patternPart.range[0],patternPart.range[1]));
+        if(!replacer.range)
+            return d3.format(replacer.d3format)(replacer.fn());
+        return d3.format(replacer.d3format)(replacer.fn(replacer.range[0],replacer.range[1]));
     }
-    return patternPart.fn();
+    return replacer.fn();
 }
 type IX =
 {
