@@ -79,7 +79,13 @@ type Replacer =
 {
     pattern: string
     fn: Function | ((param1?: number) => void) | ((param1?: number, param2?: number) => void)
+    /**
+     * https://d3js.org/d3-format
+     */
     d3format?: string
+    /**
+     * https://d3js.org/d3-time-format
+     */
     d3dateformat?: string
     defaultValues?: Array<number>;
 }
