@@ -6,58 +6,80 @@ export function textTransform(oldText: string) : string
 {
     return oldText.replace(pattern, replacer);
 }
-const pattern = /\{(.*?)((:(.*?))(:(.*?)))?\}/g
+
+const pattern = /\{(.*?)((:(.*?)))?\}/g
 
 function replacer(match: string, start: number): string {
     const parts = [...match.matchAll(pattern)];
+    let format = parts[0][4]; // like .2f
 
-    const name = parts[0][1];
-    const scale = parts[0][4];
-    const format = parts[0][6];
-    debugger;
-    const replacer = x.find(i => i.pattern === name);
+    let [name, param1, param2] = getParams(parts[0][1]); //replacer name to match with
+    //debugger;
+    const replacer = Replacers.find(i => i.pattern === name);
     if(replacer == null) return match;
+    
+    format = format ?? replacer.d3format
+    
+    if(!format)
+        return replacer.fn();
 
-    if(format)
-    {
-        if(!replacer.range)
-            return d3.format(format)(replacer.fn());
-        return d3.format(format)(replacer.fn(replacer.range[0],replacer.range[1]));
-    }
-    else if(replacer.d3format)
-    {
-        if(!replacer.range)
-            return d3.format(replacer.d3format)(replacer.fn());
-        return d3.format(replacer.d3format)(replacer.fn(replacer.range[0],replacer.range[1]));
-    }
-    return replacer.fn();
+    if(!replacer.d3params)
+        return d3.format(format)(replacer.fn());
+
+    param1 = param1 || (replacer.d3params && replacer.d3params[0]);
+    param2 = param2 || (replacer.d3params && replacer.d3params[1]);
+
+    return d3.format(format)(replacer.fn(param1));
 }
-type IX =
+
+const scalePartRegex = /(.*?)((\d{1,10})([KMB])?(-(\d{1,10})([KMB])?)?)/g
+function getParams(nameAndScale: string): [name: string, param1?: number, param2?: number]
+{
+    const scaleParams = [...nameAndScale.matchAll(scalePartRegex)];
+    if(!scaleParams || !scaleParams[0] || !scaleParams[0][1]) return [nameAndScale];
+
+    const name = scaleParams[0][1];
+    let param1: number | undefined;
+    let param2: number | undefined;
+    if(scaleParams[0][3])
+    {
+        param1 = convertScale(scaleParams[0][3], scaleParams[0][4])
+    }
+    if(scaleParams[0][6])
+    {
+        param2 = convertScale(scaleParams[0][6], scaleParams[0][7])
+    }
+
+    return [name, param1, param2]
+}
+
+function convertScale(numString: string, scaleString: string): number {
+    let multiplier = 1;
+    if(scaleString === "K")
+        multiplier = 1000;
+    else if(scaleString === "M")
+        multiplier = 1000000;
+    else if(scaleString === "B")
+        multiplier = 1000000000;
+    let source = parseFloat(numString);
+
+     return source * multiplier 
+    }
+
+type Replacer =
 {
     pattern: string
     fn: Function | ((a?: number) => void) | ((a?: number, b?: number) => void)
     d3format?: string
-    range?: Array<number>;
+    d3params?: Array<number>;
 }
 
-const x: Array<IX> = [
-    { pattern: "random10M", fn: ()=> d3.randomUniform(0,10000000)().toString(), d3format: "d" },
-    { pattern: "random1M", fn: ()=> d3.randomUniform(0,1000000)().toString(), d3format: "d" },
-    { pattern: "random100K", fn: ()=> d3.randomUniform(0,100000)().toString(), d3format: "d" },
-    { pattern: "random10K", fn: ()=> d3.randomUniform(0,10000)().toString(), d3format: "d" },
-    { pattern: "random1K", fn: ()=> d3.randomUniform(0,1000)().toString(), d3format: "d" },
-    { pattern: "random100", fn: ()=> d3.randomUniform(0,100)().toString(), d3format: "d" },
-    { pattern: "random10", fn: ()=> d3.randomUniform(0,10)().toString(), d3format: "d" },
-    { pattern: "random", fn: (a: number, b: number)=> d3.randomUniform(a,b)().toString(), d3format: "d", range: [0,100] },
+const Replacers: Array<Replacer> = [
+    { pattern: "random", fn: (max: number, min: number)=> d3.randomUniform(min, max)().toString(), d3format: "d", d3params: [100, 0] },
 
     //
-    { pattern: "normal10M", fn: ()=> d3.randomNormal(10000000, 2500000)().toString(), d3format: "d" },
-    { pattern: "normal1M", fn: ()=> d3.randomNormal(1000000, 250000)().toString(), d3format: "d" },
-    { pattern: "normal100K", fn: ()=> d3.randomNormal(100000, 25000)().toString(), d3format: "d" },
-    { pattern: "normal10K", fn: ()=> d3.randomNormal(10000, 2500)().toString(), d3format: "d" },
-    { pattern: "normal1K", fn: ()=> d3.randomNormal(1000, 250)().toString(), d3format: "d" },
-    { pattern: "normal100", fn: ()=> d3.randomNormal(100, 25)().toString(), d3format: "d" },
-    { pattern: "normal10", fn: ()=> d3.randomNormal(10, 2.5)().toString(), d3format: "d" },
+    
+    { pattern: "normal", fn: (center: number, deviation: number)=> d3.randomNormal(center, deviation ?? (center / 4) )().toString(), d3format: "d", d3params: [100] },
     //
     
     //location
