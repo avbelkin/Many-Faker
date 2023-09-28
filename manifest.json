@@ -1,6 +1,6 @@
 {
-  "name": "Many Faker",
-  "id": "3459123965481652490",
+  "name": "Replace by templates",
+  "id": "1262143176156098097",
   "api": "1.0.0",
   "main": "build/build.js",
   "capabilities": [],
@@ -9,6 +9,16 @@
     "figma"
   ],
   "ui": "src/ui.html",
+  "menu": [
+    {
+      "name": "Run on selection",
+      "command": "replace"
+    },
+    {
+      "name": "Open UI...",
+      "command": "ui"
+    }
+  ],
   "networkAccess": {
     "allowedDomains": [
       "none"

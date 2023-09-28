@@ -48,7 +48,9 @@ Format: {<span class="name">replacer</span>[[<span class="range">min</span>-]<sp
 Where <span class="name">replacer</span> one of: <br>
 <span>random, randomN, randomE, money, moneyN, moneyE (numbers), </span><br>
 <span>recent, soon, recentDatetime, soonDatetime (dates), </span><br>
-<span>country, state, county, city, cityName, address, secondaryAddress, zipCode, iban, aminet, crds, currency, $, ccy, bic, masked</span>
+<span>country, state, county, city, cityName, address, secondaryAddress, zipCode,</span>
+<span>iban, aminet, crds, currency, $, ccy, bic, masked,</span>
+<span>companyName, companySuffix, party (name+suffix), client (party + country code)</span>
 </div>
 <div class="descr">
   Where <span class="range">min</span> and <span class="range">max</span> are numbers following by scale: <span>0, 10, 42, 1000, 1K, 100000, 100K, 42M, 100B</span>
@@ -64,8 +66,10 @@ document.getElementById('create').onclick = () => {
   parent.postMessage({ pluginMessage: { type: 'replace' } }, '*')
 }
 
+/*
 document.getElementById('cancel').onclick = () => {
   parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
 }
+*/
 
 </script>

@@ -14,7 +14,7 @@ export async function replace(selection: readonly SceneNode[]) : Promise<SceneNo
     return nodes;
 }
 
-function traverse(parentNode: SceneNode ): TextNode[]{
+function traverse(parentNode: SceneNode): TextNode[]{
     let nodes: TextNode[] = [];
 
     if(parentNode.type === "TEXT")
@@ -42,53 +42,61 @@ function traverse(parentNode: SceneNode ): TextNode[]{
 
 async function replaceTextsOnNodes(textNodes: TextNode []){
     for (const textNode of textNodes) {
-        if(textNode.fontName !== figma.mixed)
+        if(textNode.fontName === figma.mixed)
         {
-            await figma.loadFontAsync(textNode.fontName as FontName);
+            await replaceInMixedStyleNode(textNode);
         }
         else
         {
-            await Promise
-                .all(textNode.getRangeAllFontNames(0, textNode.characters.length)
-                .map(figma.loadFontAsync))
-        }
-        
-        if(textNode.hasMissingFont) 
-        {
-            console.warn('unabled to edit text node due to missing font')
-        }
-        else
-        {
-            if(textNode.fontName !== figma.mixed)
-            {
-                const hasMatchInText = pattern.test(textNode.characters);
-                const hasMatchInName = pattern.test(textNode.name);
-                
-                if(!(hasMatchInText || hasMatchInName)) continue;
-                
-                textNode.autoRename = false;
-                if(hasMatchInText)
-                    textNode.characters = textTransform(textNode.characters);
-                else if(hasMatchInName)
-                    textNode.characters = textTransform(textNode.name);
-                else
-                    debugger;
-            }
-            else
-            {
-                const segments = textNode.getStyledTextSegments(['fontName', 'indentation' ]) as Array<StyledTextSegment>;
-                for(let i = segments.length-1; i>= 0; i--)
-                {
-                    const segment = segments[i];
-                    if(!pattern.test(segment.characters)) continue;
-
-                    const oldCharsCount = segment.end - segment.start;
-                    const oldsegmentStart = segment.start;
-                    const newText = textTransform(segment.characters);
-                    textNode.insertCharacters(segment.end, newText, "BEFORE" )
-                    textNode.deleteCharacters(oldsegmentStart, oldsegmentStart+oldCharsCount)
-                }
-            }    
-        }
+            await replaceInNode(textNode);
+        }    
     }
+}
+
+async function replaceInMixedStyleNode(textNode: TextNode)
+{
+    await Promise
+        .all(textNode.getRangeAllFontNames(0, textNode.characters.length)
+        .map(figma.loadFontAsync));
+    
+    if(textNode.hasMissingFont) 
+    {
+        console.warn('unabled to edit text node due to missing font')
+    }
+
+    const segments = textNode.getStyledTextSegments(['fontName', 'indentation' ]) as Array<StyledTextSegment>;
+    for(let i = segments.length-1; i>= 0; i--)
+    {
+        const segment = segments[i];
+        if(!pattern.test(segment.characters)) continue;
+
+        const oldCharsCount = segment.end - segment.start;
+        const oldsegmentStart = segment.start;
+        const newText = textTransform(segment.characters);
+        textNode.insertCharacters(segment.end, newText, "BEFORE" )
+        textNode.deleteCharacters(oldsegmentStart, oldsegmentStart+oldCharsCount)
+    }
+}
+
+async function replaceInNode(textNode: TextNode)
+{
+    await figma.loadFontAsync(textNode.fontName as FontName);
+
+    if(textNode.hasMissingFont) 
+    {
+        console.warn('unabled to edit text node due to missing font')
+    }
+
+    const hasMatchInText = pattern.test(textNode.characters);
+    const hasMatchInName = pattern.test(textNode.name);
+    
+    if(!(hasMatchInText || hasMatchInName)) return;
+    
+    textNode.autoRename = false;
+    if(hasMatchInText)
+        textNode.characters = textTransform(textNode.characters);
+    else if(hasMatchInName)
+        textNode.characters = textTransform(textNode.name);
+    else
+        debugger;
 }

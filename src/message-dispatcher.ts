@@ -7,4 +7,8 @@ export async function messageDispatch(msg: ManyFakerMessage){
       figma.currentPage.selection = nodes;
    //   figma.viewport.scrollAndZoomIntoView(nodes);
   }
+  else
+  {
+    debugger;
+  }
 }

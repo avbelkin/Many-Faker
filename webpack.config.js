@@ -21,6 +21,7 @@ module.exports = (env, argv) =>({
           !(
             /node_modules\/@faker-js/.test(modulePath)
             || /node_modules\/d3.*/.test(modulePath)
+            || /node_modules\/core-js/.test(modulePath)
           );
         },
         loader: "babel-loader",
