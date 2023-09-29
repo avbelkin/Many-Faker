@@ -78,6 +78,7 @@ export const Replacers: Array<Replacer> = [
     { pattern: "longitude", fn: ()=> faker.location.longitude() },
     { pattern: "state", fn: ()=> faker.location.state()  },
     { pattern: "secondaryAddress", fn: ()=> faker.location.secondaryAddress() },
+    { pattern: "email", fn: ()=> faker.internet.email().toLowerCase() },
     
     // company
     { pattern: "companyName", fn: ()=> faker.company.name() },
@@ -104,5 +105,7 @@ export const Replacers: Array<Replacer> = [
     //bank specific
     { pattern: "crds", fn: (max: number, min: number)=> `100${d3.randomUniform(min, max)()}`, d3format: 'd', defaultValues: [2000000, 0] },
     { pattern: "aminet", fn: (max: number, min: number)=>  d3.randomUniform(min, max)(), d3format: '04d', defaultValues: [900, 100] },
+    { pattern: "dbmail", fn: ()=> `${faker.person.firstName().toLowerCase()}.${faker.person.lastName().toLowerCase()}@db.com` },
+
 ]
     
