@@ -19,7 +19,7 @@ function replacer(match: string, start: number): string {
     
     format = format ?? replacer.d3format ?? replacer.d3dateformat;
     
-    if(!format)
+    if(!format && !replacer.defaultValues)
         return replacer.fn();
 
     if(!replacer.defaultValues)
@@ -34,9 +34,13 @@ function replacer(match: string, start: number): string {
          
         return d3.utcFormat(format)(replacer.fn(param1));
     }
-    else
+    else if(replacer.d3format)
     {
         return d3.format(format)(replacer.fn(param1, param2));
+    }
+    else
+    {
+        return replacer.fn(param1, param2);
     }
 }
 

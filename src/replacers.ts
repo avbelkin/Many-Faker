@@ -81,9 +81,9 @@ export const Replacers: Array<Replacer> = [
     { pattern: "email", fn: ()=> faker.internet.email().toLowerCase() },
     { pattern: "guid", fn: ()=> faker.string.uuid().toLowerCase() },
     { pattern: "GUID", fn: ()=> faker.string.uuid().toUpperCase() },
-    { pattern: "Id", fn: (symbols: number)=> faker.string.nanoid(symbols), defaultValues: [10] },
-    { pattern: "id", fn: (symbols: number)=> faker.string.nanoid(symbols).toLowerCase(), defaultValues: [10] },
-    { pattern: "ID", fn: (symbols: number)=> faker.string.nanoid(symbols).toUpperCase(), defaultValues: [10] },
+    { pattern: "Id", fn: (maxLen: number)=> faker.string.alphanumeric(maxLen), defaultValues: [10] },
+    { pattern: "id", fn: (maxLen: number)=> faker.string.alphanumeric(maxLen).toLowerCase(), defaultValues: [10] },
+    { pattern: "ID", fn: (maxLen: number)=> faker.string.alphanumeric(maxLen).toUpperCase(), defaultValues: [10] },
     
     // company
     { pattern: "companyName", fn: ()=> faker.company.name() },
