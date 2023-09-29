@@ -1,26 +1,22 @@
 import { textTransform } from "./text-transform";
 
 export const pattern = /\{.*?\}/g
-export async function replace(selection: readonly SceneNode[]) : Promise<SceneNode[]>
+export async function traverseAndReplace(selection: readonly SceneNode[])
 {
-    let nodes: TextNode[] = [];
     for(const selectedNode of selection)
     {
-        const foundNodes = traverse(selectedNode);
-        if(foundNodes.length >0 )
-            nodes = nodes.concat(foundNodes);
+       traverseInner(selectedNode, true);
     }
-    await replaceTextsOnNodes(nodes);
-    return nodes;
 }
 
-function traverse(parentNode: SceneNode): TextNode[]{
+async function traverseInner(parentNode: SceneNode, autoRename?: boolean): Promise<TextNode[]>{
     let nodes: TextNode[] = [];
 
     if(parentNode.type === "TEXT")
     {
-        nodes.push(parentNode);
+        await replaceTextsOnNodes([parentNode], autoRename);
     }
+    
     else if ("children" in parentNode) {
         for (const child of parentNode.children){
             if (child.type === "GROUP" || 
@@ -30,7 +26,8 @@ function traverse(parentNode: SceneNode): TextNode[]{
                 child.type === "TEXT"
             )
             {
-                const foundNodes = traverse(child);
+                const canRename = autoRename && (child.type === "GROUP" || child.type === "FRAME" || child.type === "COMPONENT" || child.type === "TEXT")
+                const foundNodes = await traverseInner(child, canRename);
                 if(foundNodes.length> 0) {
                     nodes = nodes.concat(foundNodes);
                 }
@@ -39,8 +36,9 @@ function traverse(parentNode: SceneNode): TextNode[]{
     }
     return nodes;
 }
+const loadedFontNames = Array<FontName>();
 
-async function replaceTextsOnNodes(textNodes: TextNode []){
+async function replaceTextsOnNodes(textNodes: TextNode [], rename?: boolean){
     for (const textNode of textNodes) {
         if(textNode.fontName === figma.mixed)
         {
@@ -48,20 +46,25 @@ async function replaceTextsOnNodes(textNodes: TextNode []){
         }
         else
         {
-            await replaceInNode(textNode);
+            await replaceInNode(textNode, rename);
         }    
     }
 }
 
 async function replaceInMixedStyleNode(textNode: TextNode)
 {
-    await Promise
-        .all(textNode.getRangeAllFontNames(0, textNode.characters.length)
-        .map(figma.loadFontAsync));
+    const fontsToLoad = textNode
+        .getRangeAllFontNames(0, textNode.characters.length)
+        .filter(n => !loadedFontNames.find(f => f.family === n.family && f.style === n.style));
     
+    if(fontsToLoad.length>0)
+    {
+        await Promise.all(fontsToLoad.map(figma.loadFontAsync));
+    }
     if(textNode.hasMissingFont) 
     {
         console.warn('unabled to edit text node due to missing font')
+        return;
     }
 
     const segments = textNode.getStyledTextSegments(['fontName', 'indentation' ]) as Array<StyledTextSegment>;
@@ -78,13 +81,20 @@ async function replaceInMixedStyleNode(textNode: TextNode)
     }
 }
 
-async function replaceInNode(textNode: TextNode)
+async function replaceInNode(textNode: TextNode, rename?: boolean)
 {
-    await figma.loadFontAsync(textNode.fontName as FontName);
+    const fontsToLoad = textNode
+        .getRangeAllFontNames(0, textNode.characters.length)
+        .filter(n => !loadedFontNames.find(f => f.family === n.family && f.style === n.style));
+    
+    if(fontsToLoad.length>0){
+        await figma.loadFontAsync(textNode.fontName as FontName);
+    }
 
     if(textNode.hasMissingFont) 
     {
         console.warn('unabled to edit text node due to missing font')
+        return;
     }
 
     const hasMatchInText = pattern.test(textNode.characters);
@@ -92,11 +102,14 @@ async function replaceInNode(textNode: TextNode)
     
     if(!(hasMatchInText || hasMatchInName)) return;
     
-    textNode.autoRename = false;
-    if(hasMatchInText)
+    if(hasMatchInText){
+        if(rename) textNode.name = textNode.characters;
         textNode.characters = textTransform(textNode.characters);
-    else if(hasMatchInName)
+    }
+    else if(hasMatchInName){
+        if(rename) textNode.autoRename = false;
         textNode.characters = textTransform(textNode.name);
+    }
     else
         debugger;
 }

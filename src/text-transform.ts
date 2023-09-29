@@ -13,7 +13,7 @@ function replacer(match: string, start: number): string {
     let format = parts[0][4]; // like .2f
 
     let [name, param1, param2] = getParams(parts[0][1]); //replacer name to match with
-    debugger;
+    
     const replacer = Replacers.find(i => i.pattern === name);
     if(replacer == null) return match;
     

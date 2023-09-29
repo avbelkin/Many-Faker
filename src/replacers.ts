@@ -43,7 +43,6 @@ export const Replacers: Array<Replacer> = [
     },
     { 
         pattern: "randomE", fn: (max: number, min: number)=>{
-            debugger;
             let r = min+(d3.randomExponential(8)()*max);
             const retval = Math.min(Math.max(min, r), max);
             return retval.toString()
@@ -77,6 +76,7 @@ export const Replacers: Array<Replacer> = [
     { pattern: "latitude", fn: ()=> faker.location.latitude() },
     { pattern: "longitude", fn: ()=> faker.location.longitude() },
     { pattern: "state", fn: ()=> faker.location.state()  },
+    { pattern: "address", fn: ()=> faker.location.streetAddress() },
     { pattern: "secondaryAddress", fn: ()=> faker.location.secondaryAddress() },
     { pattern: "email", fn: ()=> faker.internet.email().toLowerCase() },
     { pattern: "guid", fn: ()=> faker.string.uuid().toLowerCase() },
