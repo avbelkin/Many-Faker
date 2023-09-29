@@ -79,6 +79,11 @@ export const Replacers: Array<Replacer> = [
     { pattern: "state", fn: ()=> faker.location.state()  },
     { pattern: "secondaryAddress", fn: ()=> faker.location.secondaryAddress() },
     { pattern: "email", fn: ()=> faker.internet.email().toLowerCase() },
+    { pattern: "guid", fn: ()=> faker.string.uuid().toLowerCase() },
+    { pattern: "GUID", fn: ()=> faker.string.uuid().toUpperCase() },
+    { pattern: "Id", fn: (symbols: number)=> faker.string.nanoid(symbols), defaultValues: [10] },
+    { pattern: "id", fn: (symbols: number)=> faker.string.nanoid(symbols).toLowerCase(), defaultValues: [10] },
+    { pattern: "ID", fn: (symbols: number)=> faker.string.nanoid(symbols).toUpperCase(), defaultValues: [10] },
     
     // company
     { pattern: "companyName", fn: ()=> faker.company.name() },
@@ -89,10 +94,10 @@ export const Replacers: Array<Replacer> = [
     { pattern: "counterparty", fn: ()=> faker.company.name() },
 
     // dates
-    { pattern: "recent", fn: (days: number)=> faker.date.recent(days), d3dateformat: "%d-%b-%Y", defaultValues: [7] },
-    { pattern: "recentDatetime", fn: (days: number)=> faker.date.recent(days), d3dateformat: "%d-%b-%Y %H:%M:%S", defaultValues: [7] },
-    { pattern: "soon", fn: (days: number)=> faker.date.soon(days), d3dateformat: "%d-%b-%Y", defaultValues: [7] },
-    { pattern: "soonDatetime", fn: (days: number)=> faker.date.soon(days), d3dateformat: "%d-%b-%Y %H:%M:%S", defaultValues: [7] },
+    { pattern: "recent", fn: (days: number)=> faker.date.recent({days}), d3dateformat: "%d-%b-%Y", defaultValues: [7] },
+    { pattern: "recentDatetime", fn: (days: number)=> faker.date.recent({days}), d3dateformat: "%d-%b-%Y %H:%M:%S", defaultValues: [7] },
+    { pattern: "soon", fn: (days: number)=> faker.date.soon({days}), d3dateformat: "%d-%b-%Y", defaultValues: [7] },
+    { pattern: "soonDatetime", fn: (days: number)=> faker.date.soon({days}), d3dateformat: "%d-%b-%Y %H:%M:%S", defaultValues: [7] },
 
     //finance
     { pattern: "masked", fn: ()=> faker.finance.maskedNumber({ length: 4, parens: false }) },
