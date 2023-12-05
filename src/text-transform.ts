@@ -3,19 +3,34 @@ import { Replacers } from './replacers'
 
 export function textTransform(oldText: string) : string
 {
-    return oldText.replace(pattern, replacer);
+    if(oldText.indexOf("|")>1) //ignore first two chars
+    {
+        console.warn(oldText);
+        const parts = [...oldText.substring(1,oldText.length-1).matchAll(/[^|]+/g)]
+        console.log(parts[0][0]);
+        debugger;
+        
+        const candidate = parts[Math.floor(Math.random()* parts.length)][0];
+
+        console.warn(candidate);
+        if(candidate.startsWith("{")) {
+            return candidate.replace(pattern, replacement);
+        }
+        return candidate;
+    }
+    return oldText.replace(pattern, replacement);
 }
 
 const pattern = /\{(.*?)((:(.*?)))?\}/g
 
-function replacer(match: string, start: number): string {
+function replacement(match: string, start: number): string {
     const parts = [...match.matchAll(pattern)];
     let format = parts[0][4]; // like .2f
 
     let [name, param1, param2] = getParams(parts[0][1]); //replacer name to match with
     
     const replacer = Replacers.find(i => i.pattern === name);
-    if(replacer == null) return match;
+    if(replacer == null) return '<ERR>';
     
     format = format ?? replacer.d3format ?? replacer.d3dateformat;
     
