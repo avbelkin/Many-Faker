@@ -5,7 +5,7 @@ export async function traverseAndReplace(selection: readonly SceneNode[])
 {
     for(const selectedNode of selection)
     {
-       traverseInner(selectedNode, true);
+       await traverseInner(selectedNode, true);
     }
 }
 

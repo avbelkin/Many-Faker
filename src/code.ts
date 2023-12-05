@@ -10,13 +10,12 @@ figma.ui.onmessage = async msg => {
   //figma.closePlugin();
 };
 
-figma.on('run', ({command, parameters}: RunEvent) => {
+figma.on('run', async ({command, parameters}: RunEvent) => {
   if(command === "replace")
   {
-    new Promise(() => {
-      messageDispatch({type: 'replace' })
-      .then(() => figma.closePlugin())
-    })
+    await messageDispatch({type: 'replace' })
+    .then(()=> figma.closePlugin())
+    .catch(()=> figma.closePlugin());
   }
   else{
   // This shows the HTML page in "ui.html".

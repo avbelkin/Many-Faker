@@ -7,6 +7,7 @@ export async function messageDispatch(msg: ManyFakerMessage){
   }
   else
   {
+    console.warn('unknown command in plugin: %s', msg.type);
     debugger;
   }
 }
